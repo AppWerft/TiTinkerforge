@@ -1,0 +1,28 @@
+{
+  "name": "tinkerforge",
+  "preferGlobal": true,
+  "version": "2.0.2",
+  "author": "Ishraq Ibne Ashraf <ishraq@tinkerforge.com>",
+  "description": "JavaScript API Bindings for Tinkerforge Bricks and Bricklets",
+  "contributors": [{}],
+  "bin": {},
+  "scripts": {},
+  "main": "./Tinkerforge.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Tinkerforge/generators/tree/master/javascript"
+  },
+  "keywords": [
+    "hardware",
+    "embedded",
+    "api"
+  ],
+  "dependencies" : {},
+  "analyze": true,
+  "devDependencies": {},
+  "bundledDependencies": [],
+  "license": "CC0",
+  "engines": {
+    "node": ">=0.6"
+  }
+}

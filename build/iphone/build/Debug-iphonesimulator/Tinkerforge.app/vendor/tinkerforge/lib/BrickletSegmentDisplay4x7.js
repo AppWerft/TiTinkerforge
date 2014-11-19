@@ -1,0 +1,1 @@
+/Users/rainerschleevoigt/Documents/TitaniumStudioWorkspace/Tinkerforge/Resources/vendor/tinkerforge/lib/BrickletSegmentDisplay4x7.js
