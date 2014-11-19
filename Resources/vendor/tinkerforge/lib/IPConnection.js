@@ -55,96 +55,33 @@ function TFSocket(PORT, HOST, ipcon) {
     this.host = HOST;
     this.socket = null;
 
-    if (process.browser) {
-        var webSocketURL = "ws://" + this.host + ":" + this.port + "/";
-        if (typeof MozWebSocket != "undefined") {
-            this.socket = new MozWebSocket(webSocketURL, "tfp");
-        }
-        else {
-            this.socket = new WebSocket(webSocketURL, "tfp");
-        }
-        this.socket.binaryType = 'arraybuffer';
-    }
-    else {
-        var net = require('net');
-        this.socket = new net.Socket();
-    }
+    
+    var net = require('net');
+    this.socket = new net.Socket();
+    
     this.on = function (str, func) {
-        if (process.browser) {
-            switch (str) {
-            case "connect":
-                this.socket.onopen = func;
-                break;
-            case "data":
-                // Websockets in browsers return a MessageEvent. We just
-                // expose the data from the event as a Buffer as in Node.js.
-                this.socket.onmessage = function (messageEvent) {
-                    var data = new Buffer(new Uint8Array(messageEvent.data));
-                    func(data);
-                };
-                break;
-            case "error":
-                // There is no easy way to get errno for error in browser websockets.
-                // We assume error['errno'] === 'ECONNRESET'
-                this.socket.onerror = function () {
-                    var error = {"errno": "ECONNRESET"};
-                    func(error);
-                };
-                break;
-            case "close":
-                this.socket.onclose = func;
-                break;
-            }
-        }
-        else {
             this.socket.on(str, func);
-        }
+        
     };
     this.connect = function () {
-        if (process.browser) {
-            // In the browser we already connected by creating a WebSocket object
-        }
-        else {
-            this.socket.connect(this.port, this.host, null);
-        }
+        this.socket.connect(this.port, this.host, null);
+        
     };
     this.setNoDelay = function (value) {
-        if (process.browser) {
-            // Currently no API available in browsers
-            // But Nagle algorithm seems te be turned off in most browsers by default anyway
-        }
-        else {
             this.socket.setNoDelay(value);
-        }
+        
     };
     this.write = function (data) {
-        if (process.browser) {
-            // Some browers can't send a nodejs Buffer through a websocket,
-            // we copy it into an ArrayBuffer
-            var arrayBuffer = new Uint8Array(data).buffer;
-            this.socket.send(arrayBuffer);
-            ipcon.resetDisconnectProbe();
-        }
-        else {
             this.socket.write(data, ipcon.resetDisconnectProbe());
-        }
+        
     };
     this.end = function () {
-        if (process.browser) {
-            this.socket.close();
-        }
-        else {
             this.socket.end();
-        }
+        
     };
     this.destroy = function () {
-        if (process.browser) {
-            // There is no end/destroy in browser socket, so we close in end
-            // and do nothing in destroy
-        }
-        else {
             this.socket.destroy();
-        }
+        
     };
 }
 

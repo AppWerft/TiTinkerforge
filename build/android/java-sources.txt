@@ -1,0 +1,8 @@
+"/Users/rainerschleevoigt/Documents/TitaniumStudioWorkspace/Tinkerforge/build/android/gen/android/support/v7/appcompat/R.java"
+"/Users/rainerschleevoigt/Documents/TitaniumStudioWorkspace/Tinkerforge/build/android/gen/de/appwerft/tinkerforge/ApplicationStylesheet.java"
+"/Users/rainerschleevoigt/Documents/TitaniumStudioWorkspace/Tinkerforge/build/android/gen/de/appwerft/tinkerforge/AssetCryptImpl.java"
+"/Users/rainerschleevoigt/Documents/TitaniumStudioWorkspace/Tinkerforge/build/android/gen/de/appwerft/tinkerforge/R.java"
+"/Users/rainerschleevoigt/Documents/TitaniumStudioWorkspace/Tinkerforge/build/android/gen/de/appwerft/tinkerforge/TinkerforgeActivity.java"
+"/Users/rainerschleevoigt/Documents/TitaniumStudioWorkspace/Tinkerforge/build/android/gen/de/appwerft/tinkerforge/TinkerforgeAppInfo.java"
+"/Users/rainerschleevoigt/Documents/TitaniumStudioWorkspace/Tinkerforge/build/android/gen/de/appwerft/tinkerforge/TinkerforgeApplication.java"
+"/Users/rainerschleevoigt/Documents/TitaniumStudioWorkspace/Tinkerforge/build/android/gen/ti/modules/titanium/ui/R.java"
