@@ -49,8 +49,6 @@ connectbutton.addEventListener('click', function() {
 		console.log('Device Identifier: ' + deviceIdentifier);
 		console.log('');
 	});
-
-	console.log("Press any key to exit ...");
 });
 
 

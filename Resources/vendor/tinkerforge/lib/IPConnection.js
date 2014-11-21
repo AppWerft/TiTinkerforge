@@ -7,6 +7,29 @@ Redistribution and use in source and binary forms of this file,
 with or without modification, are permitted. See the Creative
 Commons Zero (CC0 1.0) License for more details.
 */
+if (!Function.prototype.bind) {
+  Function.prototype.bind = function (oThis) {
+    if (typeof this !== "function") {
+      // closest thing possible to the ECMAScript 5 internal IsCallable function
+      throw new TypeError("Function.prototype.bind - what is trying to be bound is not callable");
+    }
+
+    var aArgs = Array.prototype.slice.call(arguments, 1),
+        fToBind = this,
+        fNOP = function () {},
+        fBound = function () {
+          return fToBind.apply(this instanceof fNOP && oThis
+                                 ? this
+                                 : oThis,
+                               aArgs.concat(Array.prototype.slice.call(arguments)));
+        };
+
+    fNOP.prototype = this.prototype;
+    fBound.prototype = new fNOP();
+
+    return fBound;
+  };
+};
 
 var Device = require('vendor/tinkerforge/lib/Device');
 
@@ -59,7 +82,7 @@ function TFSocket(PORT, HOST, ipcon) {
     this.socket =Ti.Network.Socket.createTCP();
     
     this.on = function (str, func) {
-            this.socket.on(str, func);
+            this.socket.addEventListener(str, func);
         
     };
     this.connect = function () {
@@ -198,7 +221,7 @@ function IPConnection() {
     this.connect = function (host, port, errorCallback) {
     		// this error appears:
     		// message = "'undefined' is not a function (evaluating 'this.connectInternal.bind(this, host, port, errorCallback)')";
-        console.log(typeof this.connectInternal);
+        console.log(typeof this.connectInternal);  // function
         this.pushTask(this.connectInternal.bind(this, host, port, errorCallback), IPConnection.TASK_KIND_CONNECT);
     };
     this.connectInternal = function (host, port, errorCallback) {
