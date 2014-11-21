@@ -8,7 +8,7 @@ with or without modification, are permitted. See the Creative
 Commons Zero (CC0 1.0) License for more details.
 */
 
-var Device = require('./Device');
+var Device = require('vendor/tinkerforge/lib/Device');
 
 IPConnection.FUNCTION_ENUMERATE = 254;
 IPConnection.FUNCTION_DISCONNECT_PROBE = 128;
@@ -56,8 +56,7 @@ function TFSocket(PORT, HOST, ipcon) {
     this.socket = null;
 
     
-    var net = require('net');
-    this.socket = new net.Socket();
+    this.socket =Ti.Network.Socket.createTCP();
     
     this.on = function (str, func) {
             this.socket.on(str, func);
@@ -122,7 +121,7 @@ function IPConnection() {
     this.taskQueue = [];
     this.isConnected = false;
     this.connectErrorCallback = undefined;
-    this.mergeBuffer = new Buffer(0);
+    this.mergeBuffer =  Ti.createBuffer({ length: 0 });
     this.brickd = new BrickDaemon('2', this);
 
     this.disconnectProbe = function () {
@@ -197,6 +196,9 @@ function IPConnection() {
         return;
     };
     this.connect = function (host, port, errorCallback) {
+    		// this error appears:
+    		// message = "'undefined' is not a function (evaluating 'this.connectInternal.bind(this, host, port, errorCallback)')";
+        console.log(typeof this.connectInternal);
         this.pushTask(this.connectInternal.bind(this, host, port, errorCallback), IPConnection.TASK_KIND_CONNECT);
     };
     this.connectInternal = function (host, port, errorCallback) {

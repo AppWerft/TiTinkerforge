@@ -1,13 +1,15 @@
+Ti.UI.backgroundColor='white';
+
 var Tinkerforge = require('vendor/tinkerforge/index');
 
-var HOST = 'localhost';
-var PORT = 4223;
+var HOST = 'google.com';
+var PORT = 80;
 
 var self = Ti.UI.createWindow({
 	exitOnClose : true
 });
 var connectbutton = Ti.UI.createButton({
-	top : 10,
+	top : 50,
 	title : 'Connect'
 });
 
