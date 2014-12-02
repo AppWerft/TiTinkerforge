@@ -7,29 +7,8 @@ Redistribution and use in source and binary forms of this file,
 with or without modification, are permitted. See the Creative
 Commons Zero (CC0 1.0) License for more details.
 */
-if (!Function.prototype.bind) {
-  Function.prototype.bind = function (oThis) {
-    if (typeof this !== "function") {
-      // closest thing possible to the ECMAScript 5 internal IsCallable function
-      throw new TypeError("Function.prototype.bind - what is trying to be bound is not callable");
-    }
 
-    var aArgs = Array.prototype.slice.call(arguments, 1),
-        fToBind = this,
-        fNOP = function () {},
-        fBound = function () {
-          return fToBind.apply(this instanceof fNOP && oThis
-                                 ? this
-                                 : oThis,
-                               aArgs.concat(Array.prototype.slice.call(arguments)));
-        };
-
-    fNOP.prototype = this.prototype;
-    fBound.prototype = new fNOP();
-
-    return fBound;
-  };
-};
+// https://gist.github.com/tobsn/3d3021a5ffff1141e2ba
 
 var Device = require('vendor/tinkerforge/lib/Device');
 
@@ -77,39 +56,37 @@ function TFSocket(PORT, HOST, ipcon) {
     this.port = PORT;
     this.host = HOST;
     this.socket = null;
-
-    
-    this.socket =Ti.Network.Socket.createTCP();
-    
-    this.on = function (str, func) {
-            this.socket.addEventListener(str, func);
-        
+    this.socket = Ti.Network.Socket.createTCP({
+    		host : this.host,
+    		port : this.port,
+    		connected : function (e) {
+    			console.log(e);
+    		},
+    		error : function (e) {},
+    		accepted : function (e) {},
+    	});
+    this.addEventListener = function (str, func) {
+        this.socket.addEventListener(str, func);
     };
     this.connect = function () {
-        this.socket.connect(this.port, this.host, null);
-        
+    	    //this.socket.connect();
     };
     this.setNoDelay = function (value) {
-            this.socket.setNoDelay(value);
-        
+       //   this.socket.setNoDelay(value);
     };
     this.write = function (data) {
-            this.socket.write(data, ipcon.resetDisconnectProbe());
-        
+       this.socket.write(data, ipcon.resetDisconnectProbe());
     };
     this.end = function () {
-            this.socket.end();
-        
+        this.socket.end();
     };
     this.destroy = function () {
-            this.socket.destroy();
-        
+        this.socket.destroy();
     };
 }
 
 BrickDaemon.FUNCTION_GET_AUTHENTICATION_NONCE = 1;
 BrickDaemon.FUNCTION_AUTHENTICATE = 2;
-
 function BrickDaemon(uid, ipcon) {
 	Device.call(this, this, uid, ipcon);
 	BrickDaemon.prototype = Object.create(Device);
@@ -126,7 +103,6 @@ function BrickDaemon(uid, ipcon) {
 		this.ipcon.sendRequest(this, BrickDaemon.FUNCTION_AUTHENTICATE, [clientNonce, digest], 'B4 B20', '', returnCallback, errorCallback);
 	};
 }
-
 // the IPConnection class and constructor
 function IPConnection() {
     // Creates an IP Connection object that can be used to enumerate the available
@@ -146,7 +122,6 @@ function IPConnection() {
     this.connectErrorCallback = undefined;
     this.mergeBuffer =  Ti.createBuffer({ length: 0 });
     this.brickd = new BrickDaemon('2', this);
-
     this.disconnectProbe = function () {
         if (this.socket !== undefined) {
             this.socket.write(this.createPacketHeader(undefined, 8, IPConnection.FUNCTION_DISCONNECT_PROBE), this.resetDisconnectProbe());
@@ -154,14 +129,12 @@ function IPConnection() {
     };
     this.pushTask = function (handler, kind) {
         this.taskQueue.push({"handler": handler, "kind": kind});
-
         if (this.taskQueue.length === 1) {
             this.executeTask();
         }
     };
     this.executeTask = function () {
         var task = this.taskQueue[0];
-
         if (task !== undefined) {
             task.handler();
         }
@@ -175,20 +148,16 @@ function IPConnection() {
     };
     this.getCurrentTaskKind = function () {
         var task = this.taskQueue[0];
-
         if (task !== undefined) {
             return task.kind;
         }
-
         return undefined;
     };
     this.getNextTaskKind = function () {
         var task = this.taskQueue[1];
-
         if (task !== undefined) {
             return task.kind;
         }
-
         return undefined;
     };
     this.disconnect = function (errorCallback) {
@@ -196,13 +165,11 @@ function IPConnection() {
     };
     this.disconnectInternal = function (errorCallback) {
         var autoReconnectAborted = false;
-
         if (this.getNextTaskKind() === IPConnection.TASK_KIND_AUTO_RECONNECT) {
             // Remove auto-reconnect task, to break recursion
             this.removeNextTask();
             autoReconnectAborted = true;
         }
-
         if (!this.isConnected) {
             if (!autoReconnectAborted && errorCallback !== undefined) {
                 // Not using `this.` for the error callback function because
@@ -212,30 +179,26 @@ function IPConnection() {
             this.popTask();
             return;
         }
-
         this.socket.end();
         this.socket.destroy();
         // no popTask() here, will be done in handleConnectionClose()
         return;
     };
     this.connect = function (host, port, errorCallback) {
-    		// this error appears:
-    		// message = "'undefined' is not a function (evaluating 'this.connectInternal.bind(this, host, port, errorCallback)')";
-        console.log(typeof this.connectInternal);  // function
+    		
         this.pushTask(this.connectInternal.bind(this, host, port, errorCallback), IPConnection.TASK_KIND_CONNECT);
     };
     this.connectInternal = function (host, port, errorCallback) {
+    		
         if (this.isConnected) {
             if (errorCallback !== undefined) {
                 // Not using `this.` for the error callback function because
                 // we want to call what user provided not the saved one
                 errorCallback(IPConnection.ERROR_ALREADY_CONNECTED);
             }
-
             this.popTask();
             return;
         }
-
         // Saving the user provided error callback function for future use
         this.connectErrorCallback = errorCallback;
         clearInterval(this.disconnectProbeIID);
@@ -243,10 +206,10 @@ function IPConnection() {
         this.port = port;
         this.socket = new TFSocket(this.port, this.host, this);
         this.socket.setNoDelay(true);
-        this.socket.on('connect', this.handleConnect.bind(this));
-        this.socket.on('data', this.handleIncomingData.bind(this));
-        this.socket.on('error', this.handleConnectionError.bind(this));
-        this.socket.on('close', this.handleConnectionClose.bind(this));
+        this.socket.addEventListener('connect', this.handleConnect.bind(this));
+        this.socket.addEventListener('data', this.handleIncomingData.bind(this));
+        this.socket.addEventListener('error', this.handleConnectionError.bind(this));
+        this.socket.addEventListener('close', this.handleConnectionClose.bind(this));
         this.socket.connect();
     };
     this.handleConnect = function () {

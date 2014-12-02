@@ -1,18 +1,58 @@
-Ti.UI.backgroundColor='white';
+Ti.UI.backgroundColor = 'white';
 
 var Tinkerforge = require('vendor/tinkerforge/index');
 
-var HOST = 'google.com';
-var PORT = 80;
+var HOST = '8.8.8.8';
+var PORT = 32443;
 
 var self = Ti.UI.createWindow({
-	exitOnClose : true
+	exitOnClose : true,
+	fullscreen : true,
+
+	layout : 'vertical'
+});
+
+var hostinput = Ti.UI.createTextField({
+	top : 100,
+	height : 45,
+	value : HOST,
+	returnKeyType : Ti.UI.RETURNKEY_DONE,
+	keyboardType : Ti.UI.KEYBOARD_DECIMAL_PAD,
+	borderStyle : Ti.UI.INPUT_BORDERSTYLE_ROUNDED,
+	left : 50,
+	font : {
+		fontSize : 12
+	},
+	right : 50
+});
+
+var portinput = Ti.UI.createTextField({
+	top : 20,
+	height : 45,
+	value : PORT,
+	returnKeyType : Ti.UI.RETURNKEY_DONE,
+	keyboardType : Ti.UI.KEYBOARD_DECIMAL_PAD,
+	borderStyle : Ti.UI.INPUT_BORDERSTYLE_ROUNDED,
+	left : 50,
+	font : {
+		fontSize : 12
+	},
+	right : 50
+
 });
 var connectbutton = Ti.UI.createButton({
 	top : 50,
-	title : 'Connect'
+	title : ' Connect ',
+	font : {
+		fontSize : 12
+	},
+	borderWidth : 1,
+	borderColor : 'silver',
+	borderRadius : 5
 });
 
+self.add(hostinput);
+self.add(portinput);
 
 connectbutton.addEventListener('click', function() {
 	var connectbutton = Ti.UI.createButton({
@@ -20,20 +60,15 @@ connectbutton.addEventListener('click', function() {
 		title : 'Connect'
 	});
 	ipcon = new Tinkerforge.IPConnection();
-	// Create IP connection
 	ipcon.connect(HOST, PORT, function(error) {
 		console.log('Error: ' + error);
 	});
-	// Connect to brickd
-
 	// Register Connected Callback
-	ipcon.on(Tinkerforge.IPConnection.CALLBACK_CONNECTED, function(connectReason) {
-		// Trigger Enumerate
+	ipcon.addEventListener(Tinkerforge.IPConnection.CALLBACK_CONNECTED, function(connectReason) {
 		ipcon.enumerate();
 	});
-
 	// Register Enumerate Callback
-	ipcon.on(Tinkerforge.IPConnection.CALLBACK_ENUMERATE,
+	ipcon.addEventListener(Tinkerforge.IPConnection.CALLBACK_ENUMERATE,
 	// Print incoming enumeration
 	function(uid, connectedUid, position, hardwareVersion, firmwareVersion, deviceIdentifier, enumerationType) {
 		console.log('UID:               ' + uid);
@@ -50,7 +85,6 @@ connectbutton.addEventListener('click', function() {
 		console.log('');
 	});
 });
-
 
 self.open();
 self.add(connectbutton);

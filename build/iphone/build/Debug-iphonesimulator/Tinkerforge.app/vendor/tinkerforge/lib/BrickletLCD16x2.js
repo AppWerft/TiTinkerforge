@@ -1,1 +1,0 @@
-/Users/rainerschleevoigt/Documents/TitaniumStudioWorkspace/Tinkerforge/Resources/vendor/tinkerforge/lib/BrickletLCD16x2.js

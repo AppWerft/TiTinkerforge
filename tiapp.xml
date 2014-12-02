@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ti:app xmlns:ti="http://ti.appcelerator.org">
     <id>de.appwerft.tinkerforge</id>
-    <name>Tinkerforge</name>
+    <name>TinkerForge</name>
     <version>1.0</version>
     <publisher>rainerschleevoigt</publisher>
     <url>http://</url>
     <description>undefined</description>
     <copyright>2014 by rainerschleevoigt</copyright>
     <icon>appicon.png</icon>
-    <fullscreen>false</fullscreen>
-    <navbar-hidden>false</navbar-hidden>
-    <analytics>true</analytics>
+    <fullscreen>true</fullscreen>
+    <navbar-hidden>true</navbar-hidden>
+    <analytics>false</analytics>
     <guid>0e89d235-c2e9-4537-b828-d1ec1283ad5c</guid>
     <property name="ti.ui.defaultunit" type="string">dp</property>
     <ios>
